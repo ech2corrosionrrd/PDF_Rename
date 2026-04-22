@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 import pandas as pd
+from openpyxl.utils import get_column_letter
 
 try:
     from tkcalendar import DateEntry  # type: ignore
@@ -270,6 +271,7 @@ MAX_ADDR_PART_LEN = 80
 
 SUFFIX_HISTORY_FILENAME = "pdf_rename_suffix_history.json"
 MAX_SUFFIX_HISTORY_ITEMS = 40
+MAX_PREVIEW_PAGES = 10
 
 WORK_CODES: Dict[str, str] = {
     "Монтаж АСКОЕ": "Монт-АСКОЕ",
@@ -337,8 +339,8 @@ def save_suffix_history(app_dir: Path, items: List[str]) -> None:
                 break
         with open(path, "w", encoding="utf-8") as f:
             json.dump(ordered, f, ensure_ascii=False, indent=2)
-    except Exception:
-        pass
+    except Exception as e:
+        logging.error("Failed to save suffix history: %s", e)
 
 
 def sanitize_component(value: str, *, spaces_to_dash: bool = False) -> str:
@@ -703,7 +705,7 @@ class App(ttk.Frame):
             list_wrap,
             height=18,
             exportselection=False,
-            activestyle="dotbox",
+            activestyle="none",
             borderwidth=1,
             highlightthickness=1,
             highlightbackground=PALETTE["border"],
@@ -792,7 +794,7 @@ class App(ttk.Frame):
             matches_wrap,
             height=2,
             exportselection=False,
-            activestyle="dotbox",
+            activestyle="none",
             borderwidth=1,
             highlightthickness=1,
             highlightbackground=PALETTE["border"],
@@ -1047,8 +1049,8 @@ class App(ttk.Frame):
             highlightthickness=1,
             highlightbackground=PALETTE["border"],
             highlightcolor=PALETTE["accent"],
-            padx=10,
-            pady=8,
+            padx=12,
+            pady=10,
         )
         self.txt_preview.grid(row=0, column=0, sticky="ew")
         xsb = ttk.Scrollbar(
@@ -1331,7 +1333,8 @@ class App(ttk.Frame):
             current_y = 0
             gap = 15 # Gap between pages
             
-            for i in range(doc.page_count):
+            pages_to_render = min(doc.page_count, MAX_PREVIEW_PAGES)
+            for i in range(pages_to_render):
                 page = doc.load_page(i)
                 pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
                 img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
@@ -1353,7 +1356,12 @@ class App(ttk.Frame):
             # Set scrollregion
             self.preview_canvas.config(scrollregion=(0, 0, cw, current_y))
             self.preview_canvas.yview_moveto(0)
-            self.lbl_preview_msg.place_forget()
+            
+            if doc.page_count > MAX_PREVIEW_PAGES:
+                self.lbl_preview_msg.configure(text=f"Відображено перші {MAX_PREVIEW_PAGES} сторінок з {doc.page_count}")
+                self.lbl_preview_msg.place(relx=0.5, rely=0.02, anchor="n")
+            else:
+                self.lbl_preview_msg.place_forget()
 
         except Exception as e:
             logging.exception("PDF preview failed")
@@ -1771,11 +1779,7 @@ class App(ttk.Frame):
                             len(str(col))
                         ) + 2 # Add some padding
                         
-                        # Convert 0-index to Excel column letter
-                        col_letter = chr(65 + idx)
-                        if idx >= 26: # Handle AA, AB... if needed
-                            col_letter = chr(64 + idx // 26) + chr(65 + idx % 26)
-                        
+                        col_letter = get_column_letter(idx + 1)
                         ws.column_dimensions[col_letter].width = min(max_len, 60) # Cap at 60
         except PermissionError:
             messagebox.showerror(
