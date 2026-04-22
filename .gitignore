@@ -1,0 +1,27 @@
+# PyInstaller
+build/
+dist/
+*.exe
+*.spec.bak
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.venv/
+venv/
+env/
+
+# Локальні дані / журнали
+*.log
+pdf_rename_suffix_history.json
+Scan/
+
+# Опційно: великі або конфіденційні дані (приберіть рядок, якщо xlsx має бути в репо)
+*.xlsx
+
+# IDE
+.idea/
+.vscode/
+.cursor/
