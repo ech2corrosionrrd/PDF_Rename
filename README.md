@@ -85,3 +85,4 @@ python pdf_rename_expert.py
 
 Локальна збірка під **Windows 7** за потреби: `build_win7.bat` або `pyinstaller ... PDF_Rename_Expert.spec` → `dist\PDF_Rename_Expert.exe` (на CI використовується сучасний Python 3.12; для Win7 збирайте окремо на Python 3.8.10).
 
+Якщо в Actions з’являється **`couldn't find remote ref refs/tags/v…`** або **`git … exit code 128`**: на GitHub ще немає цього тега. Спочатку виконайте `git push origin <тег>` (наприклад `git push origin v1.3.0`), лише потім **Run workflow** або тригер від push тега.

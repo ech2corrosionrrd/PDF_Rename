@@ -1,7 +1,7 @@
 # Створює GitHub Release з артефактом PDF_Rename_Expert.exe (PyInstaller, Windows).
-# Тригери: push тега v* або workflow_dispatch (існуючий тег).
+# Ручний запуск (workflow_dispatch): тег має вже існувати на GitHub (git push origin <tag>).
 #
-# JS-actions (checkout, gh-release): Node 24 — див. action.yml / env нижче.
+# JS-actions: Node 24 (див. env).
 name: GitHub Release
 
 on:
@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Тег, який уже є на GitHub (наприклад v1.2.0)"
+        description: "Тег, який уже є на GitHub (спочатку git push origin <tag>)"
         required: true
         default: "v1.2.0"
 
@@ -26,10 +26,28 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 45
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v5.0.1
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && format('refs/tags/{0}', github.event.inputs.tag) || github.ref }}
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Перейти на тег релізу
+        shell: pwsh
+        run: |
+          if ("${{ github.event_name }}" -eq "workflow_dispatch") {
+            $tag = "${{ github.event.inputs.tag }}".Trim()
+            if (-not $tag) { throw "Порожній тег." }
+            $remote = git ls-remote origin "refs/tags/$tag"
+            if (-not $remote) {
+              Write-Host "::error title=Тег відсутній на GitHub::Тег '$tag' не знайдено на origin. Створіть і запуште: git tag $tag && git push origin $tag"
+              exit 128
+            }
+            git fetch origin "refs/tags/${tag}:refs/tags/${tag}"
+            git checkout $tag
+          } else {
+            git checkout "${{ github.ref_name }}"
+          }
 
       - name: Set up Python
         uses: actions/setup-python@v5
