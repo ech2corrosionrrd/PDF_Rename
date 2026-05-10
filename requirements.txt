@@ -1,7 +1,5 @@
 pandas
 openpyxl
 tkcalendar
-pyinstaller
 pymupdf
 Pillow
-
