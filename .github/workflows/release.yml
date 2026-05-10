@@ -13,7 +13,7 @@ on:
       tag:
         description: "Тег, який уже є на GitHub (спочатку git push origin <tag>)"
         required: true
-        default: "v1.2.0"
+        default: "v1.3.0"
 
 permissions:
   contents: write
@@ -23,7 +23,7 @@ env:
 
 jobs:
   publish:
-    runs-on: windows-latest
+    runs-on: windows-2022
     timeout-minutes: 45
     steps:
       - name: Checkout repository
