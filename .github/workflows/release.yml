@@ -1,6 +1,6 @@
 # Створює GitHub Release для існуючого git-тега (автоматично при push тега v*
 # або вручну для вже існуючих тегів, наприклад v1.2.0).
-# Runtime Node.js 24: actions/checkout@v5, softprops/action-gh-release@v3.
+# Runtime Node.js 24: checkout@v5.0.1, action-gh-release@v3.0.0, env FORCE_JAVASCRIPT_ACTIONS_TO_NODE24.
 name: GitHub Release
 
 on:
@@ -17,17 +17,22 @@ on:
 permissions:
   contents: write
 
+# Явне перемикання JS-actions на Node 24 (GitHub Actions deprecation Node 20).
+# Див.: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v5.0.1
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && format('refs/tags/{0}', github.event.inputs.tag) || github.ref }}
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@v3.0.0
         with:
           tag_name: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.ref_name }}
           generate_release_notes: true
