@@ -1,7 +1,7 @@
 # Створює GitHub Release з артефактом PDF_Rename_Expert.exe (PyInstaller, Windows).
 # Ручний запуск (workflow_dispatch): тег має вже існувати на GitHub (git push origin <tag>).
 #
-# JS-actions: Node 24 (див. env).
+# JS-actions на Node 24: checkout@v5.0.1, setup-python@v6.2.0, action-gh-release@v3.0.0; env FORCE_JAVASCRIPT_ACTIONS_TO_NODE24.
 name: GitHub Release
 
 on:
@@ -50,7 +50,7 @@ jobs:
           }
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6.2.0
         with:
           python-version: "3.12"
           cache: pip
