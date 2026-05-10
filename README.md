@@ -60,35 +60,25 @@
 python pdf_rename_expert.py
 ```
 
-### Публікація на GitHub (реліз **v1.2.0**)
+### Публікація на GitHub
 
-Після `git remote add origin https://github.com/<користувач>/<репо>.git` у корені проєкту:
+Основний репозиторій: [ech2corrosionrrd/PDF_Rename](https://github.com/ech2corrosionrrd/PDF_Rename). Сторінка релізів: [Releases](https://github.com/ech2corrosionrrd/PDF_Rename/releases).
 
-```powershell
-.\push_release.ps1
-```
-
-або одразу з URL (якщо `origin` ще не додано):
-
-```powershell
-.\push_release.ps1 -RepoUrl 'https://github.com/<користувач>/<репо>.git'
-```
-
-Скрипт запускає тести, виконує `git push -u origin main` і `git push origin v1.2.0`. На сайті GitHub: **Releases** → створити реліз для тега `v1.2.0`; за бажання прикріпіть збірку `dist\PDF_Rename_Expert.exe`.
-
-### Публікація на GitHub (реліз **v1.2.0**)
-
-Після `git remote add origin https://github.com/<користувач>/<репо>.git` у корені проєкту:
+У корені проєкту:
 
 ```powershell
 .\push_release.ps1
 ```
 
-або одразу з URL (якщо `origin` ще не додано):
+Якщо `origin` ще не додано:
 
 ```powershell
-.\push_release.ps1 -RepoUrl 'https://github.com/<користувач>/<репо>.git'
+.\push_release.ps1 -RepoUrl 'https://github.com/ech2corrosionrrd/PDF_Rename.git'
 ```
 
-Скрипт запускає тести, виконує `git push -u origin main` і `git push origin v1.2.0`. На сайті GitHub: **Releases** → створити реліз для тега `v1.2.0`; за бажання прикріпіть збірку `dist\PDF_Rename_Expert.exe`.
+Скрипт запускає тести, робить `git push` гілки `main` і тега (наприклад **v1.2.0**).
+
+**Оформлення GitHub Release:** після появи тега на GitHub відкрийте **Actions** → workflow **GitHub Release** → **Run workflow** → у полі tag вкажіть `v1.2.0` → **Run workflow**. Буде створено реліз із автоматичними release notes. Для наступних версій достатньо запушити новий тег `v*` — workflow виконається сам.
+
+Збірку **exe** для вкладення в реліз зробіть локально (`build_win7.bat` або `pyinstaller ... PDF_Rename_Expert.spec`), файл: `dist\PDF_Rename_Expert.exe`.
 
