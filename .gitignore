@@ -26,3 +26,6 @@ Scan/
 .idea/
 .vscode/
 .cursor/
+
+# Локальні чернетки (не для репозиторію)
+scratch/repo_create.json
