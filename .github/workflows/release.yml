@@ -1,5 +1,6 @@
 # Створює GitHub Release для існуючого git-тега (автоматично при push тега v*
 # або вручну для вже існуючих тегів, наприклад v1.2.0).
+# Runtime Node.js 24: actions/checkout@v5, softprops/action-gh-release@v3.
 name: GitHub Release
 
 on:
@@ -21,12 +22,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && format('refs/tags/{0}', github.event.inputs.tag) || github.ref }}
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.ref_name }}
           generate_release_notes: true
