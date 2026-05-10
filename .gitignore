@@ -22,10 +22,14 @@ Scan/
 # Опційно: великі або конфіденційні дані (приберіть рядок, якщо xlsx має бути в репо)
 *.xlsx
 
-# IDE
+# IDE / ОС
 .idea/
 .vscode/
 .cursor/
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak
 
 # Локальні чернетки (не для репозиторію)
 scratch/repo_create.json
