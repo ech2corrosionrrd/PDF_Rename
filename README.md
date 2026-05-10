@@ -78,7 +78,10 @@ python pdf_rename_expert.py
 
 Скрипт запускає тести, робить `git push` гілки `main` і тега (наприклад **v1.2.0**).
 
-**Оформлення GitHub Release:** після появи тега на GitHub відкрийте **Actions** → workflow **GitHub Release** → **Run workflow** → у полі tag вкажіть `v1.2.0` → **Run workflow**. Буде створено реліз із автоматичними release notes. Для наступних версій достатньо запушити новий тег `v*` — workflow виконається сам.
+**Оформлення релізу з exe:** workflow **GitHub Release** на **`windows-latest`** збирає `PDF_Rename_Expert.exe` (PyInstaller), прогоняє тести й прикріплює файл до релізу на [Releases](https://github.com/ech2corrosionrrd/PDF_Rename/releases).
 
-Збірку **exe** для вкладення в реліз зробіть локально (`build_win7.bat` або `pyinstaller ... PDF_Rename_Expert.spec`), файл: `dist\PDF_Rename_Expert.exe`.
+- Після push тега виду **`v*`** (наприклад `v1.3.0`) реліз і **exe** створюються автоматично.
+- Для вже існуючого тега: **Actions → GitHub Release → Run workflow** → поле tag (наприклад `v1.2.0`).
+
+Локальна збірка під **Windows 7** за потреби: `build_win7.bat` або `pyinstaller ... PDF_Rename_Expert.spec` → `dist\PDF_Rename_Expert.exe` (на CI використовується сучасний Python 3.12; для Win7 збирайте окремо на Python 3.8.10).
 

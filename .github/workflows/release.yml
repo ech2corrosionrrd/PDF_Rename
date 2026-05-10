@@ -1,6 +1,7 @@
-# Створює GitHub Release для існуючого git-тега (автоматично при push тега v*
-# або вручну для вже існуючих тегів, наприклад v1.2.0).
-# Runtime Node.js 24: checkout@v5.0.1, action-gh-release@v3.0.0, env FORCE_JAVASCRIPT_ACTIONS_TO_NODE24.
+# Створює GitHub Release з артефактом PDF_Rename_Expert.exe (PyInstaller, Windows).
+# Тригери: push тега v* або workflow_dispatch (існуючий тег).
+#
+# JS-actions (checkout, gh-release): Node 24 — див. action.yml / env нижче.
 name: GitHub Release
 
 on:
@@ -17,22 +18,42 @@ on:
 permissions:
   contents: write
 
-# Явне перемикання JS-actions на Node 24 (GitHub Actions deprecation Node 20).
-# Див.: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.1
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && format('refs/tags/{0}', github.event.inputs.tag) || github.ref }}
 
-      - name: Create GitHub Release
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Run tests
+        run: python -m pytest tests -q
+
+      - name: Build executable (PyInstaller)
+        run: pyinstaller --noconfirm PDF_Rename_Expert.spec
+
+      - name: Create GitHub Release with EXE
         uses: softprops/action-gh-release@v3.0.0
         with:
           tag_name: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.ref_name }}
           generate_release_notes: true
+          files: dist/PDF_Rename_Expert.exe
