@@ -11,6 +11,7 @@ __pycache__/
 *$py.class
 .Python
 .venv/
+.venv-win7/
 venv/
 env/
 
@@ -31,5 +32,6 @@ Thumbs.db
 *.tmp
 *.bak
 
-# Локальні чернетки (не для репозиторію)
-scratch/repo_create.json
+# Локальні чернетки / дампи (не для репозиторію)
+scratch/
+PROJECT_DUMP.txt

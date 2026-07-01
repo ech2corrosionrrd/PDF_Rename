@@ -37,7 +37,11 @@ def render_pdf_pages(
     if target_width < 50:
         target_width = PREVIEW_FALLBACK_WIDTH
 
-    doc = fitz.open(str(pdf_path))
+    try:
+        doc = fitz.open(str(pdf_path))
+    except Exception as e:
+        raise RuntimeError(f"Не вдалося відкрити PDF (пошкоджений або не PDF): {e}") from e
+
     try:
         total_pages = doc.page_count
         images: List[Image.Image] = []

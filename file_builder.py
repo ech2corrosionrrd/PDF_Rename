@@ -43,6 +43,7 @@ class FilenameInputs:
     ip_raw: str
     modem_raw: str
     name_suffix_raw: str
+    technical_account: bool = False
 
 
 def derive_phase(phase: str, phase_ktt_raw: str) -> Tuple[str, Optional[str]]:
@@ -73,6 +74,7 @@ def derive_check_code(check_type: str) -> str:
 
 
 _DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
+TECHNICAL_ACCOUNT_LABEL = "технічний облік"
 
 
 def build_pdf_filename(inp: FilenameInputs) -> Tuple[str, List[str]]:
@@ -83,15 +85,32 @@ def build_pdf_filename(inp: FilenameInputs) -> Tuple[str, List[str]]:
     eic_full = sanitize_component(
         inp.eic_full_raw, spaces_to_dash=False, underscores_to_dash=True
     ).replace(" ", "")
-    if not eic_full:
+    if inp.technical_account:
+        if not inp.has_matches or not (inp.name_raw or "").strip():
+            if inp.has_matches:
+                errors.append("Оберіть запис зі списку (технічний облік).")
+            else:
+                errors.append(
+                    "Увімкніть «Технічний облік» і оберіть запис у «Збіги»."
+                )
+        eic_segment = sanitize_component(
+            TECHNICAL_ACCOUNT_LABEL,
+            spaces_to_dash=True,
+            underscores_to_dash=True,
+        )
+    elif not eic_full:
         if len((inp.eic_suffix_raw or "").strip()) >= 5 and inp.has_matches:
             errors.append("Оберіть запис зі списку або введіть повний EIC.")
         else:
             errors.append(
                 "Введіть повний EIC (16 символів) або виконайте пошук по базі."
             )
+        eic_segment = eic_full
     elif len(eic_full) != 16:
         errors.append("EIC має містити 16 символів.")
+        eic_segment = eic_full
+    else:
+        eic_segment = eic_full
 
     dt = (inp.date_str or "").strip()
     if not _DATE_RE.fullmatch(dt):
@@ -142,7 +161,7 @@ def build_pdf_filename(inp: FilenameInputs) -> Tuple[str, List[str]]:
         underscores_to_dash=True,
     )
 
-    parts = [scan_no, eic_full, dt, meter, name, addr]
+    parts = [scan_no, eic_segment, dt, meter, name, addr]
     if invest:
         parts.append(invest)
     parts.extend([phase, check, work])

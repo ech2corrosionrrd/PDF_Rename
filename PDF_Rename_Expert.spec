@@ -1,11 +1,16 @@
 # -*- mode: python ; coding: utf-8 -*-
-
+#
+# Windows 7: збирайте на Python 3.8.x (див. build_win7.bat та requirements-win7.txt).
+# Офіційні збірки Python 3.9+ не підтримують Win7 як цільову ОС для frozen exe.
 
 a = Analysis(
     ['pdf_rename_expert.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[
+        ('rules.json', '.'),
+        ('INSTRUKTSIYA_KORYSTUVACHA_APP.md', '.'),
+    ],
     hiddenimports=[
         "app_ui",
         "naming",
@@ -15,11 +20,20 @@ a = Analysis(
         "pdf_preview",
         "suffix_history",
         "theme",
+        "user_settings",
+        "user_manual",
+        "version",
     ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=[
+        "tkinter.test",
+        "test",
+        "unittest",
+        "pydoc",
+        "distutils.tests",
+    ],
     noarchive=False,
     optimize=0,
 )

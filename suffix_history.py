@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from pathlib import Path
 from typing import List
 
@@ -44,7 +45,11 @@ def save_suffix_history(app_dir: Path, items: List[str]) -> None:
             ordered.append(s)
             if len(ordered) >= MAX_SUFFIX_HISTORY_ITEMS:
                 break
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(ordered, f, ensure_ascii=False, indent=2)
+        tmp = path.with_suffix(".tmp")
+        tmp.write_text(
+            json.dumps(ordered, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        os.replace(str(tmp), str(path))
     except Exception as e:
         logging.error("Failed to save suffix history: %s", e)

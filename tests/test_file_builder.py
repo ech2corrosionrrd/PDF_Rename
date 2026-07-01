@@ -3,12 +3,14 @@
 from datetime import date, timedelta
 
 from file_builder import (
+    TECHNICAL_ACCOUNT_LABEL,
     FilenameInputs,
     build_pdf_filename,
     derive_check_code,
     derive_phase,
     derive_work_code,
 )
+from naming import sanitize_component
 
 
 def _base_inputs(**overrides) -> FilenameInputs:
@@ -135,3 +137,29 @@ def test_build_filename_length_capped():
     long_addr = "Адреса " * 50
     name, _ = build_pdf_filename(_base_inputs(name_raw=long_name, address_raw=long_addr))
     assert len(name) <= 200
+
+
+def test_build_technical_account_uses_label_instead_of_eic():
+    inp = _base_inputs(
+        eic_full_raw="TECH-12345",
+        technical_account=True,
+        has_matches=True,
+    )
+    name, errs = build_pdf_filename(inp)
+    assert not any("16" in e for e in errs)
+    tag = sanitize_component(
+        TECHNICAL_ACCOUNT_LABEL, spaces_to_dash=True, underscores_to_dash=True
+    )
+    assert tag in name
+    assert "TECH-12345" not in name
+
+
+def test_build_technical_account_requires_selection():
+    inp = _base_inputs(
+        eic_full_raw="",
+        name_raw="",
+        technical_account=True,
+        has_matches=True,
+    )
+    _, errs = build_pdf_filename(inp)
+    assert any("технічний облік" in e.lower() for e in errs)

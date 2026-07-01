@@ -1,0 +1,5 @@
+{
+  "work_codes": {},
+  "check_codes": {},
+  "scan_number_pattern": "(\\d{4})"
+}
