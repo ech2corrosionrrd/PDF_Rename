@@ -3,3 +3,4 @@ openpyxl
 tkcalendar
 pymupdf
 Pillow
+pywin32; sys_platform == "win32"

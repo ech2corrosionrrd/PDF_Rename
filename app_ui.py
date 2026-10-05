@@ -30,6 +30,7 @@ except ImportError:  # pragma: no cover
     ImageTk = None  # type: ignore
 
 from excel_db import ConsumerRecord, ExcelConsumerDB
+from meters_form import MetersWindow
 from file_builder import FilenameInputs, build_pdf_filename
 from naming import (
     MAX_FILENAME_LEN,
@@ -294,6 +295,12 @@ class App(ttk.Frame):
 
         ttk.Button(
             toolbar,
+            text="Лічильники по підстанціям",
+            command=self._open_meters,
+            style="Toolbar.TButton",
+        ).grid(row=0, column=2, sticky="e", padx=(0, 8))
+        ttk.Button(
+            toolbar,
             text="Оновити список (F5)",
             command=self._refresh_file_list,
             style="Toolbar.TButton",
@@ -304,6 +311,18 @@ class App(ttk.Frame):
             command=self._show_user_manual,
             style="Toolbar.TButton",
         ).grid(row=0, column=4, sticky="e")
+
+    def _open_meters(self) -> None:
+        win = getattr(self, "_meters_win", None)
+        try:
+            if win is not None and win.winfo_exists():
+                win.deiconify()
+                win.lift()
+                win.focus_force()
+                return
+        except tk.TclError:
+            pass
+        self._meters_win = MetersWindow(self.master, self.app_dir)
 
     def _build_file_list(self, parent: ttk.Frame) -> None:
         lf = ttk.LabelFrame(parent, text="  Скан-файли (PDF)  ", style="Card.TLabelframe")
