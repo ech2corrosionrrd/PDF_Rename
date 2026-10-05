@@ -40,3 +40,6 @@ PROJECT_DUMP.txt
 124/
 *.xlsm
 *.pdf
+
+# Локальні випуски (exe)
+Releases/

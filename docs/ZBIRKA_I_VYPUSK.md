@@ -19,7 +19,7 @@ python -m pytest tests -q
 pyinstaller --noconfirm PDF_Rename_Expert.spec
 ```
 
-Результат: `dist\PDF_Rename_Expert.exe`. Файли `rules.json` і довідка F1 вшиті в exe (див. `PDF_Rename_Expert.spec`).
+Результат: `dist\PDF_Rename_Expert.exe` (≈130 МБ; великі зайві пакети з глобального Python виключені в `.spec`). Якщо збірка падає з кодом 1 — exe, ймовірно, ще запущений: закрийте його. Файли `rules.json` і довідка F1 вшиті в exe (див. `PDF_Rename_Expert.spec`).
 
 ## 3. Збірка під Windows 7
 
