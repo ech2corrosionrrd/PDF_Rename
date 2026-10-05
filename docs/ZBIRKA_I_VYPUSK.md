@@ -11,21 +11,23 @@
 | Реальні дані (книги `.xlsm/.xlsx`, скани PDF, папка `124/`, `Scan/`) | лише локально, у `.gitignore` |
 | Налаштування користувача, історія суфіксів | `%APPDATA%\PDF_Rename_Expert\` |
 
-## 2. Звичайна збірка (Windows 10/11)
+## 2. Збірка (єдина для Windows 7 і Windows 10/11)
+
+**Збираємо на Python 3.8.10 у `.venv-win7`** — така збірка працює і на Win7, і на новіших системах, і вона найменша (≈64 МБ).
 
 ```powershell
-pip install -r requirements.txt -r requirements-dev.txt
-python -m pytest tests -q
-pyinstaller --noconfirm PDF_Rename_Expert.spec
+.uild_win7.bat
 ```
 
-Результат: `dist\PDF_Rename_Expert.exe` (≈130 МБ; великі зайві пакети з глобального Python виключені в `.spec`). Якщо збірка падає з кодом 1 — exe, ймовірно, ще запущений: закрийте його. Файли `rules.json` і довідка F1 вшиті в exe (див. `PDF_Rename_Expert.spec`).
+Скрипт створює `.venv-win7` (з `requirements-win7.txt`), проганяє тести й запускає PyInstaller. Результат: `dist\PDF_Rename_Expert.exe`. Файли `rules.json` і довідка F1 вшиті в exe (див. `PDF_Rename_Expert.spec`).
 
-## 3. Збірка під Windows 7
+> ⚠️ **Не збирайте exe на Python 3.14** (і, ймовірно, 3.13+ з Tcl/Tk 9): PyInstaller 6.19 не пакує дані Tcl/Tk 9, і exe при запуску падає з помилкою `Tcl data directory ... _tcl_data not found`. Зайві пакети з глобального Python (`scipy`, `matplotlib` тощо) виключені в `.spec`, щоб збірка не розбухала.
 
-Потрібен **Python 3.8.10 x64**. Запустіть `build_win7.bat`: він створює `.venv-win7`, ставить `requirements-win7.txt`, проганяє тести й збирає exe.
+Якщо збірка падає з кодом 1 — exe, ймовірно, ще запущений: закрийте його.
 
-Окремо перевірте на Win7: наявність VC++ Redistributable та оновлень системи, роботу запису в Excel (`pywin32`) і друку PDF. На сучасному Python це перевірено лише тестами й ручним прогоном.
+## 3. Перевірка збірки на Win7
+
+На Win7 додатково перевірте: наявність VC++ Redistributable та оновлень системи, запис у Excel (`pywin32`) і друк PDF. Тести й збірка на Python 3.8 проходять на цьому ПК; запуск саме на Win7 окремо не перевірявся.
 
 ## 4. Версії
 
@@ -36,7 +38,7 @@ pyinstaller --noconfirm PDF_Rename_Expert.spec
 
 ## 5. Випуск користувачам
 
-1. Зберіть exe (розділ 2 або 3), запустіть його вручну й пройдіть чекліст нижче.
+1. Зберіть exe (розділ 2), **запустіть його й переконайтесь, що відкрилось головне вікно** (живий процес без вікна — ознака помилки старту), потім пройдіть чекліст й пройдіть чекліст нижче.
 2. Покладіть exe у спільну папку / передайте користувачам. Збірки зберігаються у `Releases\v1.x.y\` (папка в `.gitignore`, на GitHub не потрапляє): exe, довідка й `SHA256.txt`; старіші збірки — у `Releases\archive\`, щоб можна було відкотитись.
 3. У тій самій теці залиште `INSTRUKTSIYA_KORYSTUVACHA_APP.md`.
 
