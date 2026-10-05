@@ -1,19 +1,18 @@
 # Створює GitHub Release з артефактом PDF_Rename_Expert.exe (PyInstaller, Windows).
+# УВАГА: релізи й збірки в проєкті ведуться ЛОКАЛЬНО (docs/ZBIRKA_I_VYPUSK.md);
+# автозапуск по тегу вимкнено, workflow лишено лише для рідкісного ручного запуску.
 # Ручний запуск (workflow_dispatch): тег має вже існувати на GitHub (git push origin <tag>).
 #
 # JS-actions на Node 24: checkout@v5.0.1, setup-python@v6.2.0, action-gh-release@v3.0.0; env FORCE_JAVASCRIPT_ACTIONS_TO_NODE24.
 name: GitHub Release
 
 on:
-  push:
-    tags:
-      - "v*"
   workflow_dispatch:
     inputs:
       tag:
         description: "Тег, який уже є на GitHub (спочатку git push origin <tag>)"
         required: true
-        default: "v1.4.0"
+        default: "v1.5.0"
 
 permissions:
   contents: write

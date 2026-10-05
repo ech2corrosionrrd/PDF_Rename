@@ -63,7 +63,7 @@ python pdf_rename_expert.py
 
 ### Публікація на GitHub
 
-Основний репозиторій: [ech2corrosionrrd/PDF_Rename](https://github.com/ech2corrosionrrd/PDF_Rename). Сторінка релізів: [Releases](https://github.com/ech2corrosionrrd/PDF_Rename/releases).
+Основний репозиторій: [ech2corrosionrrd/PDF_Rename](https://github.com/ech2corrosionrrd/PDF_Rename).
 
 У корені проєкту:
 
@@ -77,13 +77,8 @@ python pdf_rename_expert.py
 .\push_release.ps1 -RepoUrl 'https://github.com/ech2corrosionrrd/PDF_Rename.git'
 ```
 
-Скрипт запускає тести, робить `git push` гілки `main` і тега (наприклад **v1.2.0**).
+Скрипт запускає тести й робить `git push` гілки `main` (тег пушиться лише з явним `-Tag`).
 
-**Оформлення релізу з exe:** workflow **GitHub Release** на **`windows-2022`** збирає `PDF_Rename_Expert.exe` (PyInstaller), прогоняє тести й прикріплює файл до релізу на [Releases](https://github.com/ech2corrosionrrd/PDF_Rename/releases).
+**Збірка й випуск — локально** на ПК, GitHub використовується як резервне збереження документації й структури проєкту. Порядок збірки, нумерація версій і резервування: [docs/ZBIRKA_I_VYPUSK.md](docs/ZBIRKA_I_VYPUSK.md).
 
-- Після push тега виду **`v*`** (наприклад `v1.3.0`) реліз і **exe** створюються автоматично.
-- Для вже існуючого тега: **Actions → GitHub Release → Run workflow** → поле tag (наприклад `v1.2.0`).
-
-Локальна збірка під **Windows 7** за потреби: `build_win7.bat` або `pyinstaller ... PDF_Rename_Expert.spec` → `dist\PDF_Rename_Expert.exe` (на CI використовується сучасний Python 3.12; для Win7 збирайте окремо на Python 3.8.10).
-
-Якщо в Actions з’являється **`couldn't find remote ref refs/tags/v…`** або **`git … exit code 128`**: на GitHub ще немає цього тега. Спочатку виконайте `git push origin <тег>` (наприклад `git push origin v1.3.0`), лише потім **Run workflow** або тригер від push тега.
+Workflow **GitHub Release** лишено лише для ручного запуску (**Actions → GitHub Release → Run workflow**); автозапуску по тегу немає.

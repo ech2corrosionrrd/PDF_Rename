@@ -1,22 +1,16 @@
-# Публікація гілки main і тега релізу на GitHub.
+# Збереження гілки main на GitHub (резервна копія документації й структури).
+# Тег пушиться лише якщо вказано -Tag (релізи на GitHub не ведемо).
 # Приклад:
-#   .\push_release.ps1 -Tag v1.4.0
-#   .\push_release.ps1 -RepoUrl 'https://github.com/USER/PDF_Rename.git' -Tag v1.4.0
-# Якщо origin уже додано:
-#   .\push_release.ps1 -Tag v1.4.0
+#   .\push_release.ps1
+#   .\push_release.ps1 -RepoUrl 'https://github.com/USER/PDF_Rename.git'
 param(
     [string] $RepoUrl = "",
-    [string] $Tag = "v1.4.0",
+    [string] $Tag = "",
     [string] $Branch = "main"
 )
 
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
-
-if (-not $Tag.Trim()) {
-    Write-Error "Порожній тег. Вкажіть -Tag, наприклад v1.4.0."
-    exit 1
-}
 
 $remotes = @(git remote 2>$null)
 $hasOrigin = $remotes -contains "origin"
@@ -44,12 +38,13 @@ Write-Host "git push -u origin $Branch"
 git push -u origin $Branch
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-Write-Host "git push origin $Tag"
-git push origin $Tag
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+if ($Tag.Trim()) {
+    Write-Host "git push origin $Tag"
+    git push origin $Tag
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
 
 Write-Host @"
-Готово.
-  Тег $Tag на GitHub запустить workflow «GitHub Release» (тести + PDF_Rename_Expert.exe).
-  Локальна збірка під Win7: build_win7.bat
+Готово: гілка $Branch збережена на GitHub.
+  Збірка й випуск — локально (build_win7.bat, docs/ZBIRKA_I_VYPUSK.md).
 "@
